@@ -25,7 +25,7 @@ def generate_text(data):
         これらの情報をもとに効果的なキャッチコピーを5個作成してください。"""
 
     response = openai.Completion.create(
-        model="gpt-3.5-turbo-instruct",
+        engine="gpt-3.5-turbo-instruct",
         prompt=prompt,
         max_tokens=1000,
         temperature=0
