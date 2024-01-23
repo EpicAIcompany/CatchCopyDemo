@@ -1,10 +1,6 @@
 import streamlit as st
-import lightgbm as lgb
-import numpy as np
-import pandas as pd
 import os
 import openai
-import math
 from dotenv import load_dotenv
 
 load_dotenv(".env")
