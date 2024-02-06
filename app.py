@@ -7,7 +7,7 @@ load_dotenv(".env")
 
 openai.api_key = os.getenv('opn_api')
 
-def generate_text(data):
+def generate_text(data, model="gpt-4", temperature=0):
     prompt = f"""
         次の情報に基づいて、広告のキャッチコピーを5個生成してください。
 
@@ -24,13 +24,20 @@ def generate_text(data):
 
         これらの情報をもとに効果的なキャッチコピーを5個作成してください。"""
 
-    response = openai.Completion.create(
-        engine="gpt-3.5-turbo-instruct",
-        prompt=prompt,
+    response = openai.chat.completions.create(
+        # engine="gpt-3.5-turbo-instruct",
+        # prompt=prompt,
+        # max_tokens=1000,
+        # temperature=0
+        model=model,
+        messages=[
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": prompt}
+                ],
+        temperature=temperature,
         max_tokens=1000,
-        temperature=0
     )
-    return response.choices[0].text.strip()
+    return response.choices[0].message.content.strip()
 
 # カスタムヘッダーのためのCSS
 fixed_header_html = """
@@ -106,14 +113,14 @@ st.write("商品・サービスについての詳細をお書きください。"
 st.markdown("""
     商品サービスの概要
     <br>
-    <p class="small-text">ex: スカウト型転職サービス</p>
+    <p class="small-text">ex: オンラインパーソナルフィットネス</p>
 """, unsafe_allow_html=True)
 product_service = st.text_input("", "")
 # 広告の訴求軸
 st.markdown("""
     広告の訴求軸
     <br>
-    <p class="small-text">ex: 仕事と育児を両立できる転職</p>
+    <p class="small-text">ex: 自宅でプロのトレーニングを受けられる手軽さ</p>
 """, unsafe_allow_html=True)
 appeal = st.text_input("", "", key="appeal_input")
 
@@ -121,7 +128,7 @@ appeal = st.text_input("", "", key="appeal_input")
 st.markdown("""
     商品・サービスの特徴・強み
     <br>
-    <p class="small-text">ex: 業界専門家によるカウンセリング</p>
+    <p class="small-text">ex: パーソナライズされたトレーニングプランと栄養指導</p>
 """, unsafe_allow_html=True)
 features = st.text_input("", "", key="features_input")
 
@@ -176,7 +183,7 @@ st.write("ペルソナを具体的にお書きください。")
 st.markdown("""
     ターゲットのニーズ・悩み・問題、現状の不満や課題
     <br>
-    <p class="small-text">ex: ワークライフバランスの改善を求めている</p>
+    <p class="small-text">ex: 自宅で運動する時間とモチベーションがない</p>
 """, unsafe_allow_html=True)
 needs_challenges = st.text_input("", "", key="needs_challenges_input")
 
@@ -184,7 +191,7 @@ needs_challenges = st.text_input("", "", key="needs_challenges_input")
 st.markdown("""
     解決策への期待
     <br>
-    <p class="small-text">ex: 柔軟な勤務時間の提供</p>
+    <p class="small-text">ex: いつでもどこでもアクセスできるフィットネス指導</p>
 """, unsafe_allow_html=True)
 solution_expectations = st.text_input("", "", key="solution_expectations_input")
 
@@ -192,7 +199,7 @@ solution_expectations = st.text_input("", "", key="solution_expectations_input")
 st.markdown("""
     ターゲットの関心ごと・優先事項
     <br>
-    <p class="small-text">ex: キャリアアップ、家族との時間</p>
+    <p class="small-text">ex: 健康維持、体力向上、ストレス軽減</p>
 """, unsafe_allow_html=True)
 interests_priorities = st.text_input("", "", key="interests_priorities_input")
 
@@ -200,7 +207,7 @@ interests_priorities = st.text_input("", "", key="interests_priorities_input")
 st.markdown("""
     メディア利用傾向
     <br>
-    <p class="small-text">ex: ソーシャルメディアでの情報収集が多い</p>
+    <p class="small-text">ex: 動画コンテンツの視聴と健康・フィットネスに関するブログのフォローが多い</p>
 """, unsafe_allow_html=True)
 media_usage = st.text_input("", "", key="media_usage_input")
 # 制約条件
@@ -210,7 +217,7 @@ st.write("コピーのテーマ、方向性についてお書きください。"
 st.markdown("""
     コピーのテーマ、方向性
     <br>
-    <p class="small-text">ex: キャリア志向の強い親御さん向けの転職支援</p>
+    <p class="small-text">ex: 在宅フィットネスを通じた健康と活力の向上</p>
 """, unsafe_allow_html=True)
 theme = st.text_input("", "", key="theme_input")
 
@@ -218,7 +225,7 @@ theme = st.text_input("", "", key="theme_input")
 st.markdown("""
     アピールしたいポイント
     <br>
-    <p class="small-text">ex: 仕事と育児の両立できる職場</p>
+    <p class="small-text">ex: 自宅でプロの指導を受けながら理想の体を手に入れる</p>
 """, unsafe_allow_html=True)
 appeal_points = st.text_input("", "", key="appeal_points_input")
 
@@ -226,7 +233,7 @@ appeal_points = st.text_input("", "", key="appeal_points_input")
 st.markdown("""
     コピーの例
     <br>
-    <p class="small-text">ex: 「家庭も、キャリアも、あなたのスタイルで」</p>
+    <p class="small-text">ex: 「健康も、自信も、自宅から始めよう」</p>
 """, unsafe_allow_html=True)
 copy_examples = st.text_input("", "", key="copy_examples_input")
 # コピーライティング生成
